@@ -269,8 +269,6 @@ sys.path.append('../lab1/')
 import tramdata as td
 ```
 
-If you have not yet done so, it is an easy task to restructure your repository: use `git mv` to move files in the correct directories after you have created them.
-
 ### The `TramNetwork` class
 
 The class `TramNetwork` is a `WeightedGraph` (i.e. inherits from it) where:
