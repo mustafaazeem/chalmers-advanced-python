@@ -3496,23 +3496,26 @@ So in the next section we will look at using a big industrial-strength web frame
 #### 9.5.2. Web frameworks: Django
 
 Most modern web development is done with **frameworks**, which bundle libraries, conventions, and some "magic" which in general make it quicker to develop a web application compared to doing it from scratch.
-
-There are countless frameworks out there, and their popularity changes over time.One of the most popular web frameworks for Python is [Django](https://www.djangoproject.com/), which we will use in this course and which you are very likely to come across in industry too.
+There are countless frameworks out there, and their popularity changes over time.
+One of the most popular web frameworks for Python is [Django](https://www.djangoproject.com/), which we will use in this course and which you are very likely to come across in industry too.
 
 Trying to understand all the things that a big framework does is often daunting, and you have to learn how to filter through the marketing speech:
 
 > Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design. Built by experienced developers, it takes care of much of the hassle of web development, so you can focus on writing your app without needing to reinvent the wheel.
 
-The things we are interested in are:
+_Quote from Djagno's homepage <https://www.djangoproject.com/>_
 
-* **HTTP server**: listens to HTTP requests and can send responses which are valid HTTP. We also want it to be able to handle concurrent requests from multiple clients efficiently.
-* **URL routing**: we want to handle different URLs in different ways, considering HTTP method, path, and queries.
-* **Serving static files**: some files such as images just need to be sent directly to client without any processing.
-* **Dynamic HTML templating**: HTML pages need to be dynamically generated with content specific for that request before sending to client.
-* **Form handling**: we want to automatically generate HTML forms and handle data submitted by them.
-* **Persistence to database**: we want to store and retrieve data from a database in a concenient way.
+The features we are interested in are:
+
+* **HTTP server**: listen to HTTP requests and send responses which are valid HTTP. We also want to handle concurrent requests from multiple clients efficiently.
+* **URL routing**: handle different URLs in different ways, considering HTTP method, path, and queries.
+* **Serving static files**: send certain files directly to client without any processing, such as images.
+* **Dynamic HTML templating**: dynamically generate HTML pages with content specific for that request before sending to client.
+* **Form handling**: automatically generate HTML forms and handle data submitted by them.
+* **Persistence to database**: store and retrieve data from a database in a convenient way.
 
 In order to use a framework, things must be done in the way the framework dictates. This means files need particular names in specific folders, functions need to have certain signatures, special base classes need to be inherited, etc.
+Everything we will see in the following sections is specific to how things are done in Django (version 5.2).
 
 ##### Models, views and templates
 
@@ -3546,7 +3549,7 @@ from .models import Band
 from django.shortcuts import render
 
 def band_search(request):
-    query = request.GET.get('q')
+    query = request.GET.get('query')
     matching_bands = Band.objects.filter(name__contains=query)
     return render(request, 'bands.html', {'bands': matching_bands})
 ```
@@ -3575,7 +3578,7 @@ And our HTML template looks like this:
 <ol>
 ```
 
-All these parts work togther, so that when we send a `GET` request `/bands/search/?q=Black` we get something like the following rendered HTML as a response (assuming this data already exists in our data store):
+All these parts work togther, so that when we send a `GET` request `/bands/search/?query=Black` we get something like the following rendered HTML as a response (assuming this data already exists in our data store):
 
 ```html
 <h2>Search results:</h2>
@@ -3588,13 +3591,13 @@ All these parts work togther, so that when we send a `GET` request `/bands/searc
 
 ##### Form handling
 
-In our previous example we assumed that someone typed in the URL `/bands/search/?q=Black` directly, but usually such URLs are pieced together by the browser when a user submits a **form**.
+In our previous example we assumed that someone typed in the URL `/bands/search/?query=Black` directly, but usually such URLs are pieced together by the browser when a user submits a **form**.
 A simple HTML form for this use case can look like this:
 
 ```html
 <form action="/bands/search/" method="GET">
-    <label for="my_input">Query:</label>
-    <input type="text" id="my_input" placeholder="Band name" />
+    <label for="query_input">Query:</label>
+    <input type="text" name="query" id="query_input" placeholder="Band name" />
     <input type="submit" value="Search" />
 </form>
 ```
@@ -3603,11 +3606,12 @@ And is rendered visually like so:
 
 ![A simple web form](./form.png)
 
-Notice that many parts of this form need to match.
-We could just put this HTML directly into our template file,
-but Django offers functionality to automate this.
+Notice that the details of the fields need to match the behaviour in our view: there is a single field with name `q` of type text.
+It is entirely up to us to ensure that these things match.
 
-We define the form in Django, making sure to inherit from the corresponding base class:
+We could just put this HTML directly into our template file and it should work,
+but Django offers functionality to automate the building of forms.
+To take advantage of this, we define the form in Django, making sure to inherit from the corresponding base class:
 
 ```python
 # app/forms.py
@@ -3617,7 +3621,7 @@ class BandSearchForm(forms.Form):
     query = forms.CharField(max_length=100)
 ```
 
-This newly-defined form has a single field `query` with a specific type.
+This newly-defined form has a single field `query` of type `CharField`.
 In order to render this form, we need to pass it to the template in our view. We're going to update the behaviour of our view to work as follows:
 
 * Show the form if there no search query, otherwise don't show it
@@ -3632,7 +3636,7 @@ from django.shortcuts import render
 def band_search(request):
     form = BandSearchForm(request.GET)
     if form.is_valid():
-        query = form.data['q']
+        query = form.data['query']
         matching_bands = Band.objects.filter(name__contains=query)
         return render(request, 'bands.html', {'bands': matching_bands})
     else:
@@ -3664,33 +3668,123 @@ Finally we just need to specify where in our template the form should go (note w
 We've specified the _structure_ of our data in `app/models.py`, but where does the data itself come from?
 The answer is a **database**, which is not part of Django itself, but which Django interfaces with on our behalf.
 Many database engines exist (e.g. MySQL, PostgreSQL, etc.) which usually run as standalone applications. In production environments they often run on different servers to the web server itself.
-However the simplest database backend we can use with Django is SQLite, which is not a separate application. Rather all the database contents are stored inside a single local file.
+However the simplest database backend we can use with Django is **SQLite**,
+which rather than being a separate application, stores all database contents inside a single local file.
 
 One of the main features of Django is its **object-relational mapper (ORM)** which provides an interface between models as they are defined in Django, and the underlying database engine.
-Django's `Model` class (which our model inherits) allows us add/update/find instances of our model direclty through the class' methods:
+Django's `Model` class (which our `Band` model inherits) allows us to add/update/find instances of our model directly through the class' methods.
+
+So, if we open up a Django shell we can add some new bands like so:
 
 ```plain
->>> from .models import Band
+$ ./manage.py shell
 >>> Band.objects.create(name="Dire Straits", year=1977)
 <Band: Band object (1)>
 >>> Band.objects.create(name="Pink Floyd", year=1965)
 <Band: Band object (2)>
+```
 
->>> Band.objects.all()
-<QuerySet [<Band: Band object (1)>, <Band: Band object (2)>]>
->>> [band.name for band in Band.objects.all()]
-["Dire Straits", "Pink Floyd"]
+Although we have "only" created a few Python objects, in the background Django has taken care of persisting these objects into the database, by creating and running SQL queries like these:
 
+```sql
+INSERT INTO app_band ('name', 'year') VALUES ("Dire Straits", 1977);
+INSERT INTO app_band ('name', 'year') VALUES ("Pink Floyd", 1965);
+```
+
+In fact we can peek inside our database using an SQL client completely separate from Django so see that the data really is there:
+
+```plain
+$ sqlite3 db.sqlite3 
+sqlite> SELECT * FROM 'app_band';
+1|Dire Straits|1977
+2|Pink Floyd|1965
+```
+
+Similarly we can use Django's ORM to filter entries in our database, in this case returning all objects where the year field is less than (`year__lt`) 1970:
+
+```plain
 >>> Band.objects.filter(year__lt=1970)
 <QuerySet [<Band: Band object (2)>]>
 ```
 
-TODO
+In this case the Django internally runs this SQL query on our database for us:
+
+```sql
+SELECT * FROM 'app_band' WHERE 'year' < 1970;
+```
+
+These are just a few simple examples of what Django's ORM can do.
+As you can imagine, there are many features which cover things such as validation, relations between models, bulk updates, etc.
+In general ORMs are useful for a number of reasons:
+
+* they take care of writing boilerplate code (converting from Python syntax to SQL and back), which is repetitive and error-prone,
+* they add security by protecting against [SQL injection attacks](https://owasp.org/www-community/attacks/SQL_Injection),
+* they abstract away from the underlying database, making it easy to swap database engine without changing any code.
+
+##### Migrations
+
+Even though ORMs hide away lots of database details for us, there are still some situations which we need to understand and appreciate.
+We've seen about that the ORM automatically updates the _contents_ of the database for us, but what about the _structure_ of the database?
+
+When defining a model in Django, before we can actually use it to add data, we need to ensure that the model structure as defined in Python is synced with the table structure in the database. That's what **migrations** are for.
+First we need to create a migration:
+
+```plain
+$ ./manage.py makemigrations
+Migrations for 'app':
+  app/migrations/0001_initial.py
+    + Create model Band
+```
+
+Then we need to apply the migration onto the database:
+
+```plain
+$ ./manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, app, auth, contenttypes, sessions, tram
+Running migrations:
+  Applying app.0001_initial... OK
+```
+
+You might wonder why these steps need to be manual: why doesn't Django just automatically update the structure of the database without needing these commands?
+The answer is to **prevent data loss**.
+Whenever changes are made to a model, we need to decide when those changes are applied onto the underlying database by creating and applying migrations using the steps above.
+
+For example if we decide that `Band.year` field should be a date instead of an integer, we make this change in the model:
+
+```python
+# app/models.py
+from django.db import models
+
+class Band(models.Model):
+    name = models.CharField(max_length=200)
+    year = models.DateField() # was previously IntegerField()
+```
+
+Then create a new migration:
+
+```plain
+$ ./manage.py makemigrations
+Migrations for 'app':
+  app/migrations/0002_alter_band_year.py
+    ~ Alter field year on band
+```
+
+Then apply it:
+
+```plain
+$ ./manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, app, auth, contenttypes, sessions, tram
+Running migrations:
+  Applying app.0002_alter_band_year... OK
+```
+
+It's a boring detail which would be nice to not have to think about, but the authors of Django have decided that modifying the database's structure automatically as soon as you change the model is too unsafe.
 
 ##### A final word on frameworks
 
 There are many things in Django which we haven't seen, such as user authentication, caching, admin, internationalisation etc. which are outside the scope of this course.
-
 But we conclude with a quote on the potential downsides of choosing to use a big framwork such as Django:
 
 > Frameworks are powerful tools. We’d be lost without them. But there’s a cost to using them.
