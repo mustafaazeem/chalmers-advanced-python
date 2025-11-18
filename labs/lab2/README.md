@@ -25,10 +25,12 @@ The main learning outcomes are:
 
 ## Overview
 
-You are expected to submit two Python files:
+You are expected to submit four Python files:
 
 - `graphs.py` implementing general graphs and graph algorithms
 - `trams.py` implementing transport networks by using concepts from `graphs.py`
+- `test_graphs.py` containing tests for the code in `graphs.py`
+- `test_trams.py` containing tests for the code in `trams.py`
 
 The following UML diagram shows the classes that you are expected to implement in these files.
 
