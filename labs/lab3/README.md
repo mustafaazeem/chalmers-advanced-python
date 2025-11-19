@@ -78,7 +78,7 @@ lab3
 │   ├── settings.py
 │   ├── urls.py 🟡
 │   └── wsgi.py
-├── myvenv
+├── venv
 │   └── ...
 ├── static
 │   ├── tramnetwork.json ⚪️
@@ -130,45 +130,45 @@ Now we will prepare our environment, install the Django library, and initialize 
 3. Create a Python virtual environment (maybe not necessary, but the best practice):
 
     ```sh
-    $ python3 -m venv myvenv
+    $ python3 -m venv venv
     ```
 
-    This will create the directory `myvenv` with lots of things in it, but you don't need to concern yourselves with its contents.
+    This will create the directory `venv` with lots of things in it, but you don't need to concern yourselves with its contents.
 
 4. Activate the virtual environment:
     - on Linux/Mac:
 
       ```sh
-      $ source myvenv/bin/activate
+      $ source venv/bin/activate
       ```
 
     - on Windows:
 
       ```sh
-      $ myvenv/Scripts/activate.bat
+      $ venv/Scripts/activate.bat
       ```
 
       or
 
       ```sh
-      $ myvenv/Scripts/activate.ps1
+      $ venv/Scripts/activate.ps1
       ```
 
       Which of these two commands will work depends on what shell you are using. If unsure, try both.
   
-    You should now see the string `(myvenv)` prefixed to your command line prompt.
+    You should now see the string `(venv)` prefixed to your command line prompt.
 
 5. Install the necessary Python libraries into the virtual environment:
 
     ```sh
-    (myvenv) $ pip install django==5.2.7
-    (myvenv) $ pip install networkx==3.5
+    (venv) $ pip install django==5.2.7
+    (venv) $ pip install networkx==3.5
     ```
 
 6. Create a new Django project with:
 
     ```sh
-    (myvenv) $ django-admin startproject mysite .
+    (venv) $ django-admin startproject mysite .
     ```
 
     (the last dot `.` is necessary: it refers to your working directory, where it creates a directory named
@@ -525,7 +525,7 @@ Submit all the files that are needed to run your application by committing them 
 but take care to **avoid committing automatically generated files**, in particular:
 
 1. the dynamic images in `tram/templates/tram/images/generated/`
-2. your local Python virtual environment `myvenv/`
+2. your local Python virtual environment `venv/`
 3. cache folders such as `__pycache__/` which can be automatically created by your IDE
 
 You should use a `.gitignore` file to avoid committing such paths to the repository.
