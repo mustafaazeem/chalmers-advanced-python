@@ -3321,9 +3321,7 @@ Then you can try a few more examples and realise that there are many cases of va
 As usual, instead of trying to think of and handle all these cases outselves, in many situations it makes more sense to use an existing library which is designed for exactly this task.
 Popular examples include the Python standard library [`html.parser`](https://docs.python.org/3/library/html.parser.html) and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/).
 
-### 9.4. XML and SVG
-
-#### 9.4.1. XML
+### 9.4. XML
 
 If you're familiar with HTML, then understanding XML is fairly logical.
 The main difference is that HTML is a language specifically designed for pages, and thus defines things such as a set of valid tags (`<p>`, `<table>`, etc) along with rules about their use (`<a>` must always have a `href` attribute, `<ul>` is not allowed inside of `<p>`, etc.)
@@ -3367,7 +3365,7 @@ could equally well be encoded in XML as:
 </stops>
 ```
 
-#### 9.4.2. SVG
+### 9.5. SVG
 
 **Scalable Vector Graphics (SVG)** is an XML-based markup language for describing two-dimensional based vector graphics.
 So, an SVG file like this:
@@ -3388,7 +3386,7 @@ Would be rendered as:
 
 As usual, a thorough tutorial and reference of SVG can be found at: <https://developer.mozilla.org/en-US/docs/Web/SVG>
 
-#### 9.4.3. Example: Modifying an SVG file
+#### 9.5.1. Example: Modifying an SVG file
 
 Let's consider a concrete task: show shortest paths on the manually written Gothenburg tram map.
 
@@ -3435,20 +3433,20 @@ color_xml_tree(tree, ["Chalmers", "Korsvägen", "Scandinavium"])
 et.ElementTree(tree).write(OUT_FILE)
 ```
 
-### 9.5. JavaScript
+### 9.6. JavaScript
 
-We will not say much about JavaScript here.
-It shares some similarities with Python in that it is an interpreted, imperative general-purpose programming language.
-You can see a comparison between JavaScript and Python at: <https://www.freecodecamp.org/news/python-vs-javascript-what-are-the-key-differences-between-the-two-popular-programming-languages/>
-
-For historical reasons, **JavaScript** is the only scripting language that web browsers run, meaning that if you want to write code which runs on the client's machine then you need to write it in (or at least _transpile_ it to) JavaScript.
+The web languages we've seen so far are all _markup_ languages which describe content,
+but they are not fully-fledged programming languages that can do arbitraty computation, like Python.
+For mainly historical reasons, **JavaScript** is the only scripting language that web browsers run.
+So if you want to write code which runs on the client's machine then you need to write it in JavaScript (or some other language which _transpiles_ into it).
 Recently there is also **WebAssembly**, a low-level type of code similar to assembly which also runs in modern web browsers.
 
-But the main point is that **web clients cannot run Python** and thus we will not be looking at writing an client-side code as part of this course.
+JavaScript shares some similarities with Python in that it is an interpreted, imperative general-purpose programming language.
+If you're interested, you can see a [comparison between JavaScript and Python](https://www.freecodecamp.org/news/python-vs-javascript-what-are-the-key-differences-between-the-two-popular-programming-languages/).
+But we will not say anything more about JavaScript here.
+The main point is that **web clients cannot run Python** and thus we will not be looking at writing any client-side code as part of this course.
 
-### 9.5. Server libraries and frameworks
-
-#### 9.5.1. Basic web servers
+### 9.7. Web servers
 
 What is a **web server**?
 It is essentially a program which runs forever, listening for HTTP requests from clients and sending responses back to them.
@@ -3493,7 +3491,9 @@ Furthermore, the library documentation itself warns that:
 
 So in the next section we will look at using a big industrial-strength web framework.
 
-#### 9.5.2. Web frameworks: Django
+### 9.8. Web frameworks: Django
+
+#### 9.8.1. Introduction to Django
 
 Most modern web development is done with **frameworks**, which bundle libraries, conventions, and some "magic" which in general make it quicker to develop a web application compared to doing it from scratch.
 There are countless frameworks out there, and their popularity changes over time.
@@ -3517,7 +3517,7 @@ The features we are interested in are:
 In order to use a framework, things must be done in the way the framework dictates. This means files need particular names in specific folders, functions need to have certain signatures, special base classes need to be inherited, etc.
 Everything we will see in the following sections is specific to how things are done in Django (version 5.2).
 
-##### Models, views and templates
+#### 9.8.2. Models, views and templates
 
 Many sources (although not Django itself, strangely) describe Django as following the **Model-View-Template (MVT)** design pattern.
 The idea is that there is a clear separation of concerns between different "layers" in the code:
@@ -3589,7 +3589,7 @@ All these parts work togther, so that when we send a `GET` request `/bands/searc
 </ol>
 ```
 
-##### Form handling
+#### 9.8.3. Form handling
 
 In our previous example we assumed that someone typed in the URL `/bands/search/?query=Black` directly, but usually such URLs are pieced together by the browser when a user submits a **form**.
 A simple HTML form for this use case can look like this:
@@ -3663,7 +3663,7 @@ Finally we just need to specify where in our template the form should go (note w
 {% endif %}
 ```
 
-##### Models and ORM
+#### 9.8.4. Models and ORM
 
 We've specified the _structure_ of our data in `app/models.py`, but where does the data itself come from?
 The answer is a **database**, which is not part of Django itself, but which Django interfaces with on our behalf.
@@ -3721,7 +3721,7 @@ In general ORMs are useful for a number of reasons:
 * they add security by protecting against [SQL injection attacks](https://owasp.org/www-community/attacks/SQL_Injection),
 * they abstract away from the underlying database, making it easy to swap database engine without changing any code.
 
-##### Migrations
+#### 9.8.5. Migrations
 
 Even though ORMs hide away lots of database details for us, there are still some situations which we need to understand and appreciate.
 We've seen about that the ORM automatically updates the _contents_ of the database for us, but what about the _structure_ of the database?
@@ -3782,7 +3782,7 @@ Running migrations:
 
 It's a boring detail which would be nice to not have to think about, but the authors of Django have decided that modifying the database's structure automatically as soon as you change the model is too unsafe.
 
-##### A final word on frameworks
+#### 9.8.6. A final word on frameworks
 
 There are many things in Django which we haven't seen, such as user authentication, caching, admin, internationalisation etc. which are outside the scope of this course.
 But we conclude with a quote on the potential downsides of choosing to use a big framwork such as Django:
