@@ -3780,7 +3780,9 @@ Running migrations:
   Applying app.0002_alter_band_year... OK
 ```
 
-It's a boring detail which would be nice to not have to think about, but the authors of Django have decided that modifying the database's structure automatically as soon as you change the model is too unsafe.
+These are boring details which would be nice to not have to think about.
+But the authors of Django have decided that it would be too unsafe to modify the database's structure automatically as soon as you change the model.
+Therefore we have this migrations system, which adds a level of safety but also traceability when it comes to modifying the database's structure, which is important for large applications in production.
 
 #### 9.8.6. A final word on frameworks
 
@@ -3791,7 +3793,7 @@ But we conclude with a quote on the potential downsides of choosing to use a big
 >
 > Using a framework requires a significant commitment. By accepting the framework into your code, you surrender your control over the details that the framework manages. Of course this seems like a good thing; and it usually is. However, there’s a trap waiting around the corner; and it’s hard to see it coming. Before you know it you find yourself engaged in all manner of unnatural acts, inheriting from its base classes, relinquishing more and more of the flow of control, bowing ever deeper to the framework’s conventions, quirks, and idiosyncrasies.
 >
-> And yet despite the huge commitment you’ve made to the framework, the framework has made no reciprocal commitment to you at all. That framework is free to evolve in any direction that pleases its author. When it does, you realize that that you are simply going to have to follow along like a faithful puppy.
+> And yet despite the huge commitment you’ve made to the framework, the framework has made no reciprocal commitment to you at all. That framework is free to evolve in any direction that pleases its author. When it does, you realize that you are simply going to have to follow along like a faithful puppy.
 
 _Robert C. Martin (Uncle Bob), <https://blog.cleancoder.com/uncle-bob/2014/05/11/FrameworkBound.html>_
 
