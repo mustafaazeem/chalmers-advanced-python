@@ -3062,7 +3062,8 @@ The `assert` keyword is quite helpful for testing and debugging. However, testin
 
 ### 7.4. Property-based testing
 
-In the previous example, where we tested the behavior of `graph_convert` on invalid input, you might have identified that the test case coverage was minimal. It only checked one type of invalid input, for example a `<str>`. However, there is a wide range of other invalid inputs which we have not yet tested, for example integers, lists, or malformed dictionaries.\
+In the previous example, where we tested the behavior of `graph_convert` on invalid input, you might have identified that the test case coverage was minimal. It only checked one type of invalid input, for example a `<str>`. However, there is a wide range of other invalid inputs which we have not yet tested, for example integers, lists, or malformed dictionaries.
+
 Similarly, we have checked valid inputs via `test_mat2dict` and `test_dict2mat`. But we are not certain if our code works on all different kinds of valid inputs, for example, on a **null graph** (fully disconnected graph with no edges between vertices).
 
 Writing test cases for an all-encompassing test input range, or for a wider coverage of scenarios, is tiresome; or not possible at all. In such situations, property-based testing proves to be useful. Property-based testing is based on _Fuzzing_ idea, which means randomly generating large amounts of test data with the help of software. These test data often include boundary cases, invalid inputs, as well as valid inputs.
