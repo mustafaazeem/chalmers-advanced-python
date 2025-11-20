@@ -2823,11 +2823,14 @@ It can be more natural to jump back and forth between code and a higher-level de
 In this use, UML can be a good tool, since it shows at a glance if there is something strange in the implementation, which can then be corrected and a new UML generated.
 
 ## 7. Testing
-Testing implies verifying a piece of code (or part of it) for its behavior—be it functional, non-functional, or quality behavior. One obvious way of testing one’s code is to run it several times with various inputs—often testing boundary conditions, equivalence classes etc.—and observe the output. This form of testing requires the tester to correctly identify input scenarios in which a code can behave erroneously. However, this form of manual testing is laborious, and one may not be able to imagine and test every possible scenario. 
-Python provides several methods to test code’s behavior. In the following, we discuss some of the most common methods. 
 
-### 7.1. Manual testing 
-The simplest form of testing involves repeatedly running the code with varying inputs to test if code behaves as expected. For example, consider the following graph storage format converter. One way to test if it works correctly is by repeatedly executing the file with various inputs and note the behavior. 
+Testing implies verifying a piece of code (or part of it) for its behavior—be it functional, non-functional, or quality behavior. One obvious way of testing one’s code is to run it several times with various inputs—often testing boundary conditions, equivalence classes etc.—and observe the output. This form of testing requires the tester to correctly identify input scenarios in which a code can behave erroneously. However, this form of manual testing is laborious, and one may not be able to imagine and test every possible scenario.
+Python provides several methods to test code’s behavior. In the following, we discuss some of the most common methods.
+
+### 7.1. Manual testing
+
+The simplest form of testing involves repeatedly running the code with varying inputs to test if code behaves as expected. For example, consider the following graph storage format converter. One way to test if it works correctly is by repeatedly executing the file with various inputs and note the behavior.
+
 ```python
 def graph_convert(graph):
     '''
@@ -2838,7 +2841,7 @@ def graph_convert(graph):
     '''
 
     if isinstance(graph, dict):
-        # if input graph is dict:    
+        # if input graph is dict:
         adj_mat = [
             [
                 1 if j in graph.get(i, []) else 0
@@ -2849,7 +2852,7 @@ def graph_convert(graph):
         return adj_mat
     
     elif isinstance(graph, list):
-        # if input graph is matrix:  
+        # if input graph is matrix:
         adj_dict = {
             row_no: [ j for j in range(len(graph))
                      if graph[row_no][j] ]
@@ -2861,14 +2864,19 @@ def graph_convert(graph):
         # the input is not in expected format
         return None
 ```
-However, to test it systematically, we need to use some testing framework. 
- 
-### 7.2. Testing frameworks in Python 
-A testing framework in python refers to a systematic way of automating code testing. It is typically provided by libraries or modules, some of which are already built-in in python. A few popular examples include `unittest` (built-in), `pytest`, and `hypothesis`. 
 
-### 7.3. The `unittest` library 
-To test the `graph_converter` function, we develop a **test case** with `unittest` library in this section. A test case is a class with testing code which inherits from `unittest.TestCase` base class provided by the `unittest` framework. A **test case** class contains some **test methods** which test the code by calling appropriate functions, creating objects, and `assert`-ing some expressions. A **test suite** aggregates one or more test classes, and test methods to form a meaningful testing group. 
-To test the `graph_converter` we write `TestGraphConvert` test case. This class is saved in `test_graph.py` which resides in the same project directory. The test case class contains a test method `test_dict2mat`. Please note the naming conventions here. The class, the methods, and the file all start with `test` prefix. It is customary and facilitates automation of test case collection/execution by the **test runner**. 
+However, to test it systematically, we need to use some testing framework.
+
+### 7.2. Testing frameworks in Python
+
+A testing framework in python refers to a systematic way of automating code testing. It is typically provided by libraries or modules, some of which are already built-in in python. A few popular examples include `unittest` (built-in), `pytest`, and `hypothesis`.
+
+### 7.3. The `unittest` library
+
+To test the `graph_converter` function, we develop a **test case** with `unittest` library in this section. A test case is a class with testing code which inherits from `unittest.TestCase` base class provided by the `unittest` framework. A **test case** class contains some **test methods** which test the code by calling appropriate functions, creating objects, and `assert`-ing some expressions. A **test suite** aggregates one or more test classes, and test methods to form a meaningful testing group.
+
+To test the `graph_converter` we write `TestGraphConvert` test case. This class is saved in `test_graph.py` which resides in the same project directory. The test case class contains a test method `test_dict2mat`. Please note the naming conventions here. The class, the methods, and the file all start with `test` prefix. It is customary and facilitates automation of test case collection/execution by the **test runner**.
+
 ```python
 # file: test_graph.py
 import unittest 
@@ -2888,11 +2896,18 @@ class TestGraphConvert(unittest.TestCase):
         self.assertEqual(self.returned_mat, self.expected, 
                          f'Returned matrix is not as expected: {self.expected}')
 ```
-The `test_graph.py` imports `unittest` and the `graph_converter` which it needs to test. We then write a simple test method `test_dict2mat`. This test method calls our target function `graph_convert` and passes an adjacency dictionary `self.adj_dict`. We also create `self.expected` to store what we expect as the result of our function call. Once `graph_convert` returns a value, we *assert* two tests. First, we check if the returned value has `<list>` as type. Second, we assert that the returned value should match what we expect. The message in assert statements is displayed if an assertion fails.  
-The `unittest` has its own pool of **assertion** methods which you shall read about in the official documentation. A typical asser method call is of the form\
-`<assert_method>(<recieved data to test>, <expected data to match>, <message (optional) to display if the test fails>)`\
+
+The `test_graph.py` imports `unittest` and the `graph_converter` which it needs to test. We then write a simple test method `test_dict2mat`. This test method calls our target function `graph_convert` and passes an adjacency dictionary `self.adj_dict`. We also create `self.expected` to store what we expect as the result of our function call. Once `graph_convert` returns a value, we _assert_ two tests. First, we check if the returned value has `<list>` as type. Second, we assert that the returned value should match what we expect. The message in assert statements is displayed if an assertion fails.
+
+The `unittest` has its own pool of **assertion** methods which you shall read about in the official documentation. A typical assert method call is of the form
+
+```plain
+<assert_method>(<recieved data to test>, <expected data to match>, <message (optional) to display if the test fails>)
+```
+
 The test cases can run in several ways. We recommend that you initially run it with verbose switch `-v` which brings more information, though You can run your testsuite without it. The output from our test run shows that the `test_dict2mat` test method passed. The output also shows how much time was consumed.
-```sh
+
+```plain
 $ python3 -m unittest -v
 test_dict2mat (test_graph.TestGraphConvert.test_dict2mat) ... ok
 
@@ -2900,8 +2915,10 @@ test_dict2mat (test_graph.TestGraphConvert.test_dict2mat) ... ok
 Ran 1 test in 0.000s
 
 OK
-``` 
-Expanding the previous example, we now want to test the functionality for converting an adjacency matrix to an adjacency dictionary, and also want to test if  `graph_convert`  behaves as expected on invalid parameters. These behaviors are tested by test methods `test_mat2dict` and `test_invalid_input` respectively. 
+```
+
+Expanding the previous example, we now want to test the functionality for converting an adjacency matrix to an adjacency dictionary, and also want to test if  `graph_convert`  behaves as expected on invalid parameters. These behaviors are tested by test methods `test_mat2dict` and `test_invalid_input` respectively.
+
 ```python
 # file: test_graph.py
 import unittest 
@@ -2945,8 +2962,10 @@ class TestGraphConvert(unittest.TestCase):
 if __name__=='__main__':
     unittest.main()
 ```
-The `unittest.main` provides entry point to the unittest framework. When this function is called, it scans all your classes *inherited* from the `unittest.TestCase` superclass. It then goes on to find all methods in all such classes which have a *test* prefix in their names. All those methods are then executed in alphabetical order. 
-```sh
+
+The `unittest.main` provides entry point to the unittest framework. When this function is called, it scans all your classes _inherited_ from the `unittest.TestCase` superclass. It then goes on to find all methods in all such classes which have a _test_ prefix in their names. All those methods are then executed in alphabetical order.
+
+```plain
 $ python3 -m unittest -v
 test_dict2mat (test_graph.TestGraphConvert.test_dict2mat)
 This methods tests dictionary to matrix conversion ... ok
@@ -2978,17 +2997,29 @@ Ran 3 tests in 0.001s
 
 FAILED (failures=1)
 ```
-Note that the failure occurs in `test_mat2dict` method, where the returned dictionary does not match with our expected dictionary. If you look closely, the problem arises in the following part of returned dictionary\
-`… 2: [0, 1, 3] …`
-while expected dictionary is as below\
-`… 2: [1, 0, 3] …`\
-This difference of order in the list may not be significant in the context of a graph. That means, in a graph’s syntactical sense, these values mean the same edges between same vertices. However, in a pythonic context they are different due to lists being **ordered structures**. Therefore, you should be careful about such situations. 
 
-#### Interpreting the output: 
-A ‘ **.** ’ in the test output indicates a passed test. An ‘ **F** ’ appears for a failed test. The failed test also shows further information about cause of the failure, as well as displays the message which programmer has provided in the test case. Sometimes, you may see an ‘ **E** ’ which means the test method has encountered an error. The error message is typically verbose. 
+Note that the failure occurs in `test_mat2dict` method, where the returned dictionary does not match with our expected dictionary. If you look closely, the problem arises in the following part of returned dictionary:
 
-#### Some Good things to know: 
-If you need to test the behavior of a class, you need to import that class in your test file and make its object for testing. You can make this test object separately for each test method, or you can make one object in `setUp`  method which can then be used by several test methods, as shown in the example code below. 
+```plain
+… 2: [0, 1, 3] …
+```
+
+while expected dictionary is as below:
+
+```plain
+… 2: [1, 0, 3] …
+```
+
+This difference of order in the list may not be significant in the context of a graph. That means, in a graph’s syntactical sense, these values mean the same edges between same vertices. However, in a pythonic context they are different due to lists being **ordered structures**. Therefore, you should be careful about such situations.
+
+#### Interpreting the output
+
+A ‘ **.** ’ in the test output indicates a passed test. An ‘ **F** ’ appears for a failed test. The failed test also shows further information about cause of the failure, as well as displays the message which programmer has provided in the test case. Sometimes, you may see an ‘ **E** ’ which means the test method has encountered an error. The error message is typically verbose.
+
+#### Some good things to know
+
+If you need to test the behavior of a class, you need to import that class in your test file and make its object for testing. You can make this test object separately for each test method, or you can make one object in `setUp`  method which can then be used by several test methods, as shown in the example code below.
+
 ```python
 import unittest
 from calc import Calc 
@@ -2999,23 +3030,26 @@ class TestDiff(unittest.TestCase):
     def setUp(self):
         self.testObj = Calc(55, 25)
 
-    def test_sum(self):        
+    def test_sum(self):
         self.assertEqual(self.testObj.get_sum(), 80, "incorrect addition result")
     
     def test_dif(self):
-        self.assertEqual(self.testObj.get_difference(), 30, "incorrect subtraction result")    
+        self.assertEqual(self.testObj.get_difference(), 30, "incorrect subtraction result")
 ```
-Each approach has its own merits. For example, when test methods work with their own objects, they work independently of each other. One test methods does not affect another test method’s execution. On the other hand, one shared object made in `setUp` saves memory, and may be useful in situations where multiple behaviors successively depend upon each other. The `setUp` and `tearDown` methods in a test case are used to setup the testing environment, and clean it up after the test, respectively. 
+
+Each approach has its own merits. For example, when test methods work with their own objects, they work independently of each other. One test methods does not affect another test method’s execution. On the other hand, one shared object made in `setUp` saves memory, and may be useful in situations where multiple behaviors successively depend upon each other. The `setUp` and `tearDown` methods in a test case are used to setup the testing environment, and clean it up after the test, respectively.
 
 #### The difference between `assert` and `<assert methods>`
+
 Python provides a builtin 'assert' keyword which is used to ascertain if a condition is true. If the condition becomes false, it raises an `<AssertionError>`
+
 ```python
 def add_integers(x, y):
     return x + y 
 assert add_integers(10, 15) == 5 
 ```
 
-```sh
+```plain
 $ python3 .\assert.py
 Traceback (most recent call last):
   File ".\assert.py", line 2, in <module>
@@ -3023,32 +3057,35 @@ Traceback (most recent call last):
            ^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError
 ```
-The `assert` keyword is quite helpful for testing and debugging. However, testing frameworks have implemented their own versions of *assertions*, typically in form of asseertion methods. The `unittest` assertion methods are one such example, two of which you have seen in previous examples, namely `self.assertEqual` and `self.assertIsNone`. For a more detailed range of `unittest` assert methods, refer to [unittest library official documentation](https://docs.python.org/3/library/unittest.html)
- 
 
-### 7.4. Property-based testing 
+The `assert` keyword is quite helpful for testing and debugging. However, testing frameworks have implemented their own versions of _assertions_, typically in form of asseertion methods. The `unittest` assertion methods are one such example, two of which you have seen in previous examples, namely `self.assertEqual` and `self.assertIsNone`. For a more detailed range of `unittest` assert methods, refer to [unittest library official documentation](https://docs.python.org/3/library/unittest.html)
+
+### 7.4. Property-based testing
+
 In the previous example, where we tested the behavior of `graph_convert` on invalid input, you might have identified that the test case coverage was minimal. It only checked one type of invalid input, for example a `<str>`. However, there is a wide range of other invalid inputs which we have not yet tested, for example integers, lists, or malformed dictionaries.\
-Similarly, we have checked valid inputs via `test_mat2dict` and `test_dict2mat`. But we are not certain if our code works on all different kinds of valid inputs, for example, on a **null graph** (fully disconnected graph with no edges between vertices).\
-Writing test cases for an all-encompassing test input range, or for a wider coverage of scenarios, is tiresome; or not possible at all. In such situations, property-based testing proves to be useful. Property-based testing is based on *Fuzzing* idea, which means randomly generating large amounts of test data with the help of software. These test data often include boundary cases, invalid inputs, as well as valid inputs.
+Similarly, we have checked valid inputs via `test_mat2dict` and `test_dict2mat`. But we are not certain if our code works on all different kinds of valid inputs, for example, on a **null graph** (fully disconnected graph with no edges between vertices).
+
+Writing test cases for an all-encompassing test input range, or for a wider coverage of scenarios, is tiresome; or not possible at all. In such situations, property-based testing proves to be useful. Property-based testing is based on _Fuzzing_ idea, which means randomly generating large amounts of test data with the help of software. These test data often include boundary cases, invalid inputs, as well as valid inputs.
 
 #### 7.4.1. The hypothesis library
-We have just discovered that it is significantly difficult for programmers/testers 
- 1) to generate a large number of valid input data values
- 2) to identify all possible invalid input classes, and to generate all possible invalid input data instances
- 
-Even if such inputs have been generated, it is difficult to automate the function/method call with this large array of inputs.  
-The hypothesis library solves this problem with two simple mechanisms, namely `given` and `strategies`. 
-1) `strategies`: generates a range of random data based on some predefined strategy. A few noteable strategies include generating integers, floats, text, lists, matrices, and dictionaries.  
-2) `given`: in simple terms, it passes (*gives*) randomly generated data (*by strategies*) to the function we need to test and calls it repetedly until all random data instances are passed. Pythonically, this mechanism is implemented with `<decorators>`. The `<decorators>` transform (*enhance*) the behavior of a function. In this case `given` decorator enhances the behavior of target function in a way that it is called over and over again with the strategy-generated random input. (more on `<decorators>` soon)
 
+We have just discovered that it is significantly difficult for programmers/testers:
+
+1. to generate a large number of valid input data values
+2. to identify all possible invalid input classes, and to generate all possible invalid input data instances
+
+Even if such inputs have been generated, it is difficult to automate the function/method call with this large array of inputs.  
+The hypothesis library solves this problem with two simple mechanisms, namely `given` and `strategies`.
+
+1. `strategies`: generates a range of random data based on some predefined strategy. A few noteable strategies include generating integers, floats, text, lists, matrices, and dictionaries.
+2. `given`: in simple terms, it passes (_gives_) randomly generated data (_by strategies_) to the function we need to test and calls it repetedly until all random data instances are passed. Pythonically, this mechanism is implemented with `<decorators>`. The `<decorators>` transform (_enhance_) the behavior of a function. In this case `given` decorator enhances the behavior of target function in a way that it is called over and over again with the strategy-generated random input. (more on `<decorators>` soon)
 
 #### 7.4.2. Property-based testing: first example
+
 Graph algorithms are very subtle, and it is easy to forget testing them with all relevant kinds of cases.Thus, it is important to test them using **property-based testing**, which is made available by the `hypothesis` library:
 
 * <https://hypothesis.works/> (main page)
 * <https://hypothesis.readthedocs.io/> (documentation)
-
-
 
 The Hypothesis documentation starts with a quick start example, which we have modified just a bit:
 
@@ -3061,7 +3098,8 @@ def test_ints_are_commutative(x, y):
 
 test_ints_are_commutative()
 ```
-The function we want to test here is `test_ints_are_commutative(x, y)`. It takes two integers as parameters. The statement `@given(st.integers(), st.integers())` transformers the behvior of `<test_ints_are_commutative>`. The first strategy `<st.integers()>` generates random integers for `<parameter x>` and the second strategy `<st.integers()>` generates random integers for `<parameter y>`. The `<@given>` decorators makes it possible to call `test_ints_are_commutative(x, y)` over and over again with randomly generated input. Hence, the test case is run a large number of times with varying inputs. 
+
+The function we want to test here is `test_ints_are_commutative(x, y)`. It takes two integers as parameters. The statement `@given(st.integers(), st.integers())` transformers the behvior of `<test_ints_are_commutative>`. The first strategy `<st.integers()>` generates random integers for `<parameter x>` and the second strategy `<st.integers()>` generates random integers for `<parameter y>`. The `<@given>` decorators makes it possible to call `test_ints_are_commutative(x, y)` over and over again with randomly generated input. Hence, the test case is run a large number of times with varying inputs.
 
 When we run this (written in the file `htest.py`), we get
 
@@ -3183,7 +3221,6 @@ assert set(breadth_first(G, root)) == set(depth_first(G, root))
 ```
 
 The `hypothesis` library provides many more ways to define, combine, and restrict strategies, but you can get started with these simple ones to generate random graphs.
-
 
 ## 8. Visualization
 
