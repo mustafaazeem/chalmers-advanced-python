@@ -3195,7 +3195,7 @@ URLs have their own syntax, expressable by these simplified grammar rules:
 ```
 
 Note that **no spaces are allowed** between the components (unlike most programming languages).
-A more complete description of URL structure can be found at: <https://en.wikipedia.org/wiki/URL>
+A more complete description of URL structure can be found at: <https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/What_is_a_URL>
 
 When working with standard formats such as URLs in your own code, it is typical to rely on an existing library rather than writing your own functions to process and/or generate these formats.
 In the case of Python, we can use the standard library [`urllib.parse`](https://docs.python.org/3/library/urllib.parse.html) for analysing URLs:
@@ -3417,6 +3417,8 @@ Using tree recursion, our baseline algorithm can be:
 Implemented as follows:
 
 ```python
+import xml.etree.ElementTree as et
+
 def color_xml_tree(tree, path):
     # check current node
     if tree.text in path:
@@ -3464,7 +3466,7 @@ class HelloHandler(BaseHTTPRequestHandler):
         self.wfile.write(b"Hello, World")
 
 if __name__ == "__main__":
-    server_address = ("", 8000)
+    server_address = ("localhost", 8000)
     httpd = HTTPServer(server_address, HelloHandler)
     httpd.serve_forever()
 ```
@@ -3667,11 +3669,12 @@ Finally we just need to specify where in our template the form should go (note w
 
 We've specified the _structure_ of our data in `app/models.py`, but where does the data itself come from?
 The answer is a **database**, which is not part of Django itself, but which Django interfaces with on our behalf.
-Many database engines exist (e.g. MySQL, PostgreSQL, etc.) which usually run as standalone applications. In production environments they often run on different servers to the web server itself.
-However the simplest database backend we can use with Django is **SQLite**,
+Many database engines exist which usually run as standalone applications. In production environments they often run on different servers to the web server itself.
+So-called "relational" databases (e.g. MySQL, PostgreSQL) use **SQL (Structured Query Language)** for interacting with them, but other kinds of databases exist which use different languages, such as MongoDB which uses a JavaScript-based query language.
+The simplest database backend we can use with Django is **SQLite**,
 which rather than being a separate application, stores all database contents inside a single local file.
 
-One of the main features of Django is its **object-relational mapper (ORM)** which provides an interface between models as they are defined in Django, and the underlying database engine.
+One of the main features of Django is its **object-relational mapper (ORM)** which provides an interface between models as they are defined in Django, and the underlying database engine, without us having to write any SQL ourselves.
 Django's `Model` class (which our `Band` model inherits) allows us to add/update/find instances of our model directly through the class' methods.
 
 So, if we open up a Django shell we can add some new bands like so:
@@ -3691,7 +3694,7 @@ INSERT INTO app_band ('name', 'year') VALUES ("Dire Straits", 1977);
 INSERT INTO app_band ('name', 'year') VALUES ("Pink Floyd", 1965);
 ```
 
-In fact we can peek inside our database using an SQL client completely separate from Django so see that the data really is there:
+In fact we can peek inside our database using a separate SQL client to see that the data really is there:
 
 ```plain
 $ sqlite3 db.sqlite3 
@@ -3700,14 +3703,14 @@ sqlite> SELECT * FROM 'app_band';
 2|Pink Floyd|1965
 ```
 
-Similarly we can use Django's ORM to filter entries in our database, in this case returning all objects where the year field is less than (`year__lt`) 1970:
+Similarly, we can use Django's ORM to filter entries in our database, in this case returning all objects where the year field is less than (`year__lt`) 1970:
 
 ```plain
 >>> Band.objects.filter(year__lt=1970)
 <QuerySet [<Band: Band object (2)>]>
 ```
 
-In this case the Django internally runs this SQL query on our database for us:
+To return this data, Django internally runs this SQL query on our database for us:
 
 ```sql
 SELECT * FROM 'app_band' WHERE 'year' < 1970;
